@@ -87,10 +87,17 @@ func handleTake(room *database.Room, player *database.Player, game *database.Mah
 		return nil
 	}
 	if t, ok := card.HaveGang(p.Hand()); ok {
-		p.DarkGang(t)
-		p.TryBottomDecking(game.Game.Deck())
-		game.States[p.ID()] <- statePlay
-		return nil
+		_ = player.WriteString("You can 暗杠, do it? (y/n)\n")
+		ans, err := player.AskForString(consts.PlayMahjongTimeout)
+		if err == nil && (ans == "y" || ans == "Y") {
+			p.DarkGang(t)
+			if !game.Game.Deck().NoTiles() {
+				p.TryBottomDecking(game.Game.Deck())
+			}
+			game.States[p.ID()] <- statePlay
+			return nil
+		}
+		// choose not to do dark gang, continue normal flow
 	}
 	if card.CanGang(p.GetShowCardTiles(), p.LastTile()) {
 		_ = player.WriteString("You can 加杠, do it? (y/n)\n")
@@ -98,8 +105,10 @@ func handleTake(room *database.Room, player *database.Player, game *database.Mah
 		if err == nil && (ans == "y" || ans == "Y") {
 			showCard := p.FindShowCard(p.LastTile())
 			showCard.ModifyPongToKong(mjconsts.GANG, false)
-			p.TryBottomDecking(game.Game.Deck())
-			game.States[p.ID()] <- stateTakeCard
+			if !game.Game.Deck().NoTiles() {
+				p.TryBottomDecking(game.Game.Deck())
+			}
+			game.States[p.ID()] <- statePlay
 			return nil
 		}
 		// choose not to add kong, continue normal flow
