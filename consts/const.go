@@ -61,6 +61,81 @@ const (
 	PlayTimeout        = 40 * time.Second
 	PlayMahjongTimeout = 30 * time.Second
 	BetTimeout         = 60 * time.Second
+
+	// Mahjong constants
+	MIN_PLAYERS_MAHJONG = 2
+	MAX_PLAYERS_MAHJONG = 4
+
+	// 麻将牌类型
+	TILE_WAN  = 0 // 万
+	TILE_TIAO = 1 // 条
+	TILE_TONG = 2 // 筒
+	TILE_FENG = 3 // 风牌
+	TILE_JIAN = 4 // 箭牌
+
+	// 风牌值
+	WIND_DONG = 1 // 东风
+	WIND_NAN  = 2 // 南风
+	WIND_XI   = 3 // 西风
+	WIND_BEI  = 4 // 北风
+
+	// 箭牌值
+	JIAN_ZHONG = 5 // 红中
+	JIAN_FA    = 6 // 发财
+	JIAN_BAI   = 7 // 白板
+
+	// 游戏状态
+	GAME_STATUS_WAITING = 0
+	GAME_STATUS_DEALING = 1
+	GAME_STATUS_PLAYING = 2
+	GAME_STATUS_END     = 3
+
+	// 风圈
+	WIND_ROUND_DONG = 0 // 东风圈
+	WIND_ROUND_NAN  = 1 // 南风圈
+	WIND_ROUND_XI   = 2 // 西风圈
+	WIND_ROUND_BEI  = 3 // 北风圈
+
+	// 操作类型
+	ACTION_HU   = 0 // 胡
+	ACTION_GANG = 1 // 杠
+	ACTION_PENG = 2 // 碰
+	ACTION_CHI  = 3 // 吃
+	ACTION_PASS = 4 // 过
+
+	// 胡牌类型
+	WIN_TYPE_ZIMO         = 0 // 自摸
+	WIN_TYPE_DIANGPAO     = 1 // 点炮
+	WIN_TYPE_GANGSHANGHUA = 2 // 杠上花
+	WIN_TYPE_GANGSHANGPAO = 3 // 杠上炮
+	WIN_TYPE_QIANGGANGHU  = 4 // 抢杠胡
+
+	// 组合类型
+	SET_CHI      = 0 // 顺子
+	SET_PENG     = 1 // 刻子
+	SET_MINGGANG = 2 // 明杠
+	SET_BUGANG   = 3 // 补杠
+
+	// 番种
+	FAN_BASIC_WIN    = 1 // 基础胡 1番
+	FAN_MENQING      = 1 // 门清 1番
+	FAN_DUANYAOJIU   = 1 // 断幺九 1番
+	FAN_PINGHU       = 1 // 平胡 1番
+	FAN_DUIDUIHU     = 2 // 对对胡 2番
+	FAN_QIDUIZI      = 2 // 七对子 2番
+	FAN_HUNYISE      = 2 // 混一色 2番
+	FAN_QINGYISE     = 4 // 清一色 4番
+	FAN_DASANYUAN    = 8 // 大三元 8番
+	FAN_XIAOSIXI     = 6 // 小四喜 6番
+	FAN_DASIXI       = 8 // 大四喜 8番
+	FAN_SHISANYAO    = 8 // 十三幺 8番
+	FAN_GANGSHANGHUA = 1 // 杠上花 1番
+	FAN_ZIMO         = 1 // 自摸 1番
+	FAN_FENGKE       = 1 // 风刻 1番
+	FAN_JIANKE       = 1 // 箭刻 1番
+
+	// 默认基础分数
+	DEFAULT_BASE_SCORE = 1
 )
 
 // Room properties.
@@ -123,9 +198,8 @@ var (
 		GameTypeTexas:   "德州扑克",
 		//GameTypeUno:     "Uno",
 		GameTypeMahjong: "Mahjong",
-		
 	}
-	GameTypesIds = []int{GameTypeClassic, GameTypeLaiZi, GameTypeSkill, GameTypeRunFast, GameTypeTexas,GameTypeMahjong}
+	GameTypesIds = []int{GameTypeClassic, GameTypeLaiZi, GameTypeSkill, GameTypeRunFast, GameTypeTexas, GameTypeMahjong}
 	RoomStates   = map[int]string{
 		RoomStateWaiting: "Waiting",
 		RoomStateRunning: "Running",

@@ -180,6 +180,8 @@ func startGame(player *database.Player, room *database.Room) (err error) {
 		room.Game, err = game.InitRunFastGame(room, rule.RunFastRules)
 	case consts.GameTypeTexas:
 		room.Game, err = texas.Init(room)
+	case consts.GameTypeMahjong:
+		room.Game, err = game.InitMahjongGame(room)
 	}
 	if err != nil {
 		_ = player.WriteError(err)
@@ -214,9 +216,12 @@ func viewRoomPlayers(room *database.Room, currPlayer *database.Player) {
 
 	buf.WriteString("\nSettings:\n")
 	switch room.Type {
-	case consts.GameTypeUno, consts.GameTypeMahjong:
+	case consts.GameTypeUno:
 		buf.WriteString(fmt.Sprintf("%-5s%-5v\n", "ip:", sprintPropsState(room.EnableShowIP)))
 	case consts.GameTypeTexas:
+		buf.WriteString(fmt.Sprintf("%-5s%-5v\n", "pn:", room.MaxPlayers))
+		buf.WriteString(fmt.Sprintf("%-5s%-5v\n", "ip:", sprintPropsState(room.EnableShowIP)))
+	case consts.GameTypeMahjong:
 		buf.WriteString(fmt.Sprintf("%-5s%-5v\n", "pn:", room.MaxPlayers))
 		buf.WriteString(fmt.Sprintf("%-5s%-5v\n", "ip:", sprintPropsState(room.EnableShowIP)))
 	default:

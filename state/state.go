@@ -1,6 +1,7 @@
 package state
 
 import (
+	"github.com/ratel-online/server/state/game/mahjong"
 	"github.com/ratel-online/server/state/game/texas"
 
 	"strings"
@@ -24,6 +25,7 @@ func init() {
 	register(consts.StateUnoGame, &game.Uno{})
 	register(consts.StateRunFastGame, &game.RunFastGame{})
 	register(consts.StateTexasGame, &texas.Texas{})
+	register(consts.StateMahjongGame, &mahjong.Mahjong{})
 }
 
 func register(id consts.StateID, state State) {
