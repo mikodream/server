@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/ratel-online/server/state/game/texas"
-	"github.com/ratel-online/server/state/game/mahjong"
 	"github.com/spf13/cast"
 	"strings"
 	"time"
@@ -179,8 +178,6 @@ func startGame(player *database.Player, room *database.Room) (err error) {
 		room.Game, err = game.InitUnoGame(room)
 	case consts.GameTypeRunFast:
 		room.Game, err = game.InitRunFastGame(room, rule.RunFastRules)
-	case consts.GameTypeMahjong:
-		room.Game, err = mahjong.InitMahjongGame(room)
 	case consts.GameTypeTexas:
 		room.Game, err = texas.Init(room)
 	}
