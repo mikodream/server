@@ -1,21 +1,27 @@
-package game
+package mahjong
 
 import (
 	"bytes"
 	"fmt"
 	"sort"
 
-	"github.com/feel-easy/mahjong/card"
-	mjconsts "github.com/feel-easy/mahjong/consts"
-	"github.com/feel-easy/mahjong/event"
-	mjgame "github.com/feel-easy/mahjong/game"
-	"github.com/feel-easy/mahjong/tile"
-	"github.com/feel-easy/mahjong/util"
-	"github.com/feel-easy/mahjong/win"
+	"github.com/ratel-online/server/state/game/mahjong/card"
+	mjconsts "github.com/ratel-online/server/state/game/mahjong/consts"
+	"github.com/ratel-online/server/state/game/mahjong/event"
+	mjgame "github.com/ratel-online/server/state/game/mahjong/game"
+	"github.com/ratel-online/server/state/game/mahjong/tile"
+	"github.com/ratel-online/server/state/game/mahjong/util"
+	"github.com/ratel-online/server/state/game/mahjong/win"
 	"github.com/ratel-online/core/log"
 	"github.com/ratel-online/core/util/rand"
 	"github.com/ratel-online/server/consts"
 	"github.com/ratel-online/server/database"
+)
+
+const (
+	statePlay      = 1
+	stateTakeCard  = 2
+	stateWaiting   = 3
 )
 
 type Mahjong struct{}
