@@ -92,10 +92,14 @@ func (g *Mahjong) actionPhase(player *database.Player, game *database.Mahjong) e
 				player.StartTransaction()
 				defer player.StopTransaction()
 
-				choice, err := player.AskForInt(consts.PlayMahjongTimeout)
+				choice, err := askForIntWithRetry(player, consts.PlayMahjongTimeout)
 				if err != nil {
-					// 超时或错误，跳过操作
-					player.WriteString("操作超时，自动跳过\n")
+					// 超时或退出，跳过操作
+					if err == consts.ErrorsTimeout {
+						player.WriteString("操作超时，自动跳过\n")
+					} else {
+						player.WriteString("跳过操作\n")
+					}
 					game.CurrentIndex = game.NextPlayerIndex(game.CurrentIndex)
 					nextPlayer := game.Players[game.CurrentIndex]
 					nextPlayerObj := database.GetPlayer(nextPlayer.ID)

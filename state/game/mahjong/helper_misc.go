@@ -1,6 +1,11 @@
 package mahjong
 
-import "github.com/ratel-online/server/consts"
+import (
+	"time"
+
+	"github.com/ratel-online/server/consts"
+	"github.com/ratel-online/server/database"
+)
 
 // 辅助函数：获取动作名称
 func getActionName(actionType int) string {
@@ -41,4 +46,20 @@ func sumFanValues(fans []int) int {
 		sum += fan
 	}
 	return sum
+}
+
+// askForIntWithRetry 安全地获取整数输入，排除非超时的错误输入
+func askForIntWithRetry(player *database.Player, timeout ...time.Duration) (int, error) {
+	for {
+		val, err := player.AskForInt(timeout...)
+		if err == nil {
+			return val, nil
+		}
+		// 如果是超时或其他需要退出的错误，则直接返回
+		if err == consts.ErrorsTimeout || err == consts.ErrorsExist || err == consts.ErrorsChanClosed {
+			return 0, err
+		}
+		// 非数字输入，提示并重新尝试
+		player.WriteString("输入无效，请输入数字：")
+	}
 }
