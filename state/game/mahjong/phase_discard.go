@@ -72,11 +72,13 @@ func (g *Mahjong) discardPhase(player *database.Player, game *database.Mahjong) 
 	player.StartTransaction()
 	defer player.StopTransaction()
 
-	tileIndex, err := player.AskForInt(consts.PlayMahjongTimeout)
+	tileIndex, err := askForIntWithRetry(player, consts.PlayMahjongTimeout)
 	if err != nil {
-		// 超时，默认打最后一张牌
+		if err == consts.ErrorsTimeout {
+			player.WriteString("操作超时，自动打出最后一张牌\n")
+		}
+		// 超时或退出，默认打最后一张牌
 		tileIndex = len(game.Players[game.GetPlayerIndex(player.ID)].HandTiles)
-		player.WriteString("操作超时，自动打出最后一张牌\n")
 	}
 
 	tileIndex-- // 转换为数组索引
@@ -151,9 +153,13 @@ func (g *Mahjong) discardPhase(player *database.Player, game *database.Mahjong) 
 				checkingPlayerObj.StartTransaction()
 				defer checkingPlayerObj.StopTransaction()
 
-				choice, err := checkingPlayerObj.AskForInt(consts.PlayMahjongTimeout)
+				choice, err := askForIntWithRetry(checkingPlayerObj, consts.PlayMahjongTimeout)
 				if err != nil || choice != 1 {
-					checkingPlayerObj.WriteString("跳过胡牌\n")
+					if err == consts.ErrorsTimeout {
+						checkingPlayerObj.WriteString("操作超时，跳过胡牌\n")
+					} else {
+						checkingPlayerObj.WriteString("跳过胡牌\n")
+					}
 				} else {
 					// 执行胡牌操作
 					winScore := mjRule.CalculateScore(fans, consts.DEFAULT_BASE_SCORE, consts.WIN_TYPE_DIANGPAO)
@@ -200,9 +206,13 @@ func (g *Mahjong) discardPhase(player *database.Player, game *database.Mahjong) 
 				checkingPlayerObj.StartTransaction()
 				defer checkingPlayerObj.StopTransaction()
 
-				choice, err := checkingPlayerObj.AskForInt(consts.PlayMahjongTimeout)
+				choice, err := askForIntWithRetry(checkingPlayerObj, consts.PlayMahjongTimeout)
 				if err != nil || choice != 1 {
-					checkingPlayerObj.WriteString("跳过杠牌\n")
+					if err == consts.ErrorsTimeout {
+						checkingPlayerObj.WriteString("操作超时，跳过杠牌\n")
+					} else {
+						checkingPlayerObj.WriteString("跳过杠牌\n")
+					}
 				} else {
 					// 执行杠牌操作
 					// 从手牌中移除3张相同的牌
@@ -293,9 +303,13 @@ func (g *Mahjong) discardPhase(player *database.Player, game *database.Mahjong) 
 				checkingPlayerObj.StartTransaction()
 				defer checkingPlayerObj.StopTransaction()
 
-				choice, err := checkingPlayerObj.AskForInt(consts.PlayMahjongTimeout)
+				choice, err := askForIntWithRetry(checkingPlayerObj, consts.PlayMahjongTimeout)
 				if err != nil || choice != 1 {
-					checkingPlayerObj.WriteString("跳过碰牌\n")
+					if err == consts.ErrorsTimeout {
+						checkingPlayerObj.WriteString("操作超时，跳过碰牌\n")
+					} else {
+						checkingPlayerObj.WriteString("跳过碰牌\n")
+					}
 				} else {
 					// 执行碰牌操作
 					// 从手牌中移除2张相同的牌
@@ -341,9 +355,13 @@ func (g *Mahjong) discardPhase(player *database.Player, game *database.Mahjong) 
 					checkingPlayerObj.StartTransaction()
 					defer checkingPlayerObj.StopTransaction()
 
-					choice, err := checkingPlayerObj.AskForInt(consts.PlayMahjongTimeout)
+					choice, err := askForIntWithRetry(checkingPlayerObj, consts.PlayMahjongTimeout)
 					if err != nil || choice == 0 || choice > len(possibleChis) {
-						checkingPlayerObj.WriteString("跳过吃牌\n")
+						if err == consts.ErrorsTimeout {
+							checkingPlayerObj.WriteString("操作超时，跳过吃牌\n")
+						} else {
+							checkingPlayerObj.WriteString("跳过吃牌\n")
+						}
 					} else {
 						// 执行吃牌操作
 						selectedChi := possibleChis[choice-1]
