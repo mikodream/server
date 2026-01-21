@@ -347,35 +347,13 @@ func (g *Mahjong) discardPhase(player *database.Player, game *database.Mahjong) 
 					} else {
 						// 执行吃牌操作
 						selectedChi := possibleChis[choice-1]
-						// 从手牌中移除用于吃的两张牌
-						handTiles := []database.MahjongTile{}
-						for _, tile := range checkingPlayer.HandTiles {
-							isUsed := false
-							for _, chiTile := range selectedChi {
-								if mjRule.IsSameTile(tile, chiTile) && !database.IsSameTile(tile, discardTile) { // 不包括被吃的牌
-									isUsed = true
-									break
-								}
-							}
-							if !isUsed {
-								handTiles = append(handTiles, tile)
-							}
+						action := database.Action{
+							ActionType: consts.ACTION_CHI,
+							Tile:       discardTile,
+							ExtraData:  selectedChi,
 						}
-
-						game.Players[nextCheckIndex].HandTiles = handTiles
-
-						// 添加到吃牌组合
-						chiSet := database.ExposedSet{
-							SetType: consts.SET_CHI,
-							Tiles:   selectedChi,
-							FromWho: currentPlayerIndex,
-						}
-						game.Players[nextCheckIndex].ExposedSets = append(game.Players[nextCheckIndex].ExposedSets, chiSet)
-
-						// 吃牌后需要立即打牌
 						game.CurrentIndex = nextCheckIndex
-						checkingPlayer.State <- stateDiscard
-						return nil
+						return g.executeAction(checkingPlayerObj, game, action, currentPlayerIndex)
 					}
 				}
 			}

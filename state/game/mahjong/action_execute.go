@@ -133,9 +133,12 @@ func (g *Mahjong) executeAction(player *database.Player, game *database.Mahjong,
 
 			// 从手牌中移除1张牌
 			handTiles := []database.MahjongTile{}
+			count := 0
 			for _, tile := range game.Players[currentPlayerIndex].HandTiles {
-				if !mjRule.IsSameTile(tile, action.Tile) {
+				if !mjRule.IsSameTile(tile, action.Tile) || count >= 1 {
 					handTiles = append(handTiles, tile)
+				} else {
+					count++
 				}
 			}
 			game.Players[currentPlayerIndex].HandTiles = handTiles
@@ -239,20 +242,25 @@ func (g *Mahjong) executeAction(player *database.Player, game *database.Mahjong,
 		player.WriteString(fmt.Sprintf("你进行了吃牌: %s\n", tilesToString(chiTiles)))
 
 		// 从手牌中移除用于吃的两张牌
+		// 找出手牌中需要被扣除的两张牌
+		neededTiles := []database.MahjongTile{}
+		for _, t := range chiTiles {
+			if !mjRule.IsSameTile(t, action.Tile) {
+				neededTiles = append(neededTiles, t)
+			}
+		}
+
 		handTiles := []database.MahjongTile{}
-		usedCount := 0
 		for _, tile := range game.Players[currentPlayerIndex].HandTiles {
-			isUsed := false
-			for _, chiTile := range chiTiles {
-				if mjRule.IsSameTile(tile, chiTile) && !database.IsSameTile(tile, action.Tile) { // 不包括被吃的牌
-					if usedCount < len(chiTiles)-1 { // 减1是因为被吃的牌不算在手牌中扣除
-						isUsed = true
-						usedCount++
-						break
-					}
+			found := false
+			for i, needed := range neededTiles {
+				if mjRule.IsSameTile(tile, needed) {
+					neededTiles = append(neededTiles[:i], neededTiles[i+1:]...)
+					found = true
+					break
 				}
 			}
-			if !isUsed {
+			if !found {
 				handTiles = append(handTiles, tile)
 			}
 		}
