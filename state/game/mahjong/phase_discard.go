@@ -53,10 +53,18 @@ func (g *Mahjong) discardPhase(player *database.Player, game *database.Mahjong) 
 		player.WriteString("\n")
 	}
 
+	currentPlayer := game.Players[game.GetPlayerIndex(player.ID)]
+	if currentPlayer.LastDrawnTile != nil {
+
+		player.WriteString(fmt.Sprintf("\n你的手牌: %s", tilesToString(currentPlayer.HandTiles)))
+		player.WriteString(fmt.Sprintf("\n你摸到了: %s\n", database.TileToString(*currentPlayer.LastDrawnTile)))
+		currentPlayer.LastDrawnTile = nil // 显示后清除
+	}
+
 	player.WriteString("\n请选择要打出的牌:\n")
 	player.WriteString("你的手牌: ")
 
-	for i, tile := range game.Players[game.GetPlayerIndex(player.ID)].HandTiles {
+	for i, tile := range currentPlayer.HandTiles {
 		player.WriteString(fmt.Sprintf("%d.%s ", i+1, database.TileToString(tile)))
 	}
 	player.WriteString("\n")
@@ -224,8 +232,7 @@ func (g *Mahjong) discardPhase(player *database.Player, game *database.Mahjong) 
 						game.TileWall = game.TileWall[1:]
 						game.Players[nextCheckIndex].HandTiles = append(game.Players[nextCheckIndex].HandTiles, bonusTile)
 						sortTiles(game.Players[nextCheckIndex].HandTiles)
-
-						checkingPlayerObj.WriteString(fmt.Sprintf("杠后补牌: %s\n", database.TileToString(bonusTile)))
+						game.Players[nextCheckIndex].LastDrawnTile = &bonusTile
 
 						// 检查补杠后是否胡牌（杠上花）
 						canWin, fans := mjRule.CanWin(

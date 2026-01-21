@@ -82,8 +82,7 @@ func (g *Mahjong) executeAction(player *database.Player, game *database.Mahjong,
 				game.TileWall = game.TileWall[1:]
 				game.Players[currentPlayerIndex].HandTiles = append(game.Players[currentPlayerIndex].HandTiles, bonusTile)
 				sortTiles(game.Players[currentPlayerIndex].HandTiles)
-
-				player.WriteString(fmt.Sprintf("杠后补牌: %s\n", database.TileToString(bonusTile)))
+				game.Players[currentPlayerIndex].LastDrawnTile = &bonusTile
 
 				// 检查补杠后是否胡牌（杠上花）
 				canWin, fans := mjRule.CanWin(
@@ -159,8 +158,7 @@ func (g *Mahjong) executeAction(player *database.Player, game *database.Mahjong,
 				game.TileWall = game.TileWall[1:]
 				game.Players[currentPlayerIndex].HandTiles = append(game.Players[currentPlayerIndex].HandTiles, bonusTile)
 				sortTiles(game.Players[currentPlayerIndex].HandTiles)
-
-				player.WriteString(fmt.Sprintf("补杠后补牌: %s\n", database.TileToString(bonusTile)))
+				game.Players[currentPlayerIndex].LastDrawnTile = &bonusTile
 
 				// 检查补杠后是否胡牌（杠上花）
 				canWin, fans := mjRule.CanWin(

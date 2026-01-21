@@ -30,6 +30,7 @@ type MahjongPlayer struct {
 	Score          int           `json:"score"`          // 当前分数
 	Ready          bool          `json:"ready"`          // 是否听牌
 	Actions        []Action      `json:"actions"`        // 可执行的操作
+	LastDrawnTile  *MahjongTile  `json:"lastDrawnTile"`  // 最后摸到的牌
 	State          chan int      `json:"state"`          // 玩家状态通道
 }
 

@@ -28,6 +28,11 @@ func (g *Mahjong) dealPhase(player *database.Player, game *database.Mahjong) err
 	// 设置玩家手牌
 	for i := 0; i < numPlayers; i++ {
 		game.Players[i].HandTiles = hands[i]
+		if i == game.DealerIndex && len(hands[i]) > 0 {
+			// 庄家第14张牌视为“摸到的牌”
+			lastTile := hands[i][len(hands[i])-1]
+			game.Players[i].LastDrawnTile = &lastTile
+		}
 		sortTiles(game.Players[i].HandTiles) // 理牌
 		game.Players[i].IsDealer = (i == game.DealerIndex)
 		game.Players[i].SeatWind = i // 简化的门风设置

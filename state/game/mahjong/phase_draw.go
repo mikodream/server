@@ -33,9 +33,7 @@ func (g *Mahjong) drawPhase(player *database.Player, game *database.Mahjong) err
 	// 加入手牌并排序
 	game.Players[currentPlayerIndex].HandTiles = append(game.Players[currentPlayerIndex].HandTiles, drawnTile)
 	sortTiles(game.Players[currentPlayerIndex].HandTiles)
-
-	player.WriteString(fmt.Sprintf("你摸到了: %s\n", database.TileToString(drawnTile)))
-	player.WriteString(fmt.Sprintf("当前手牌: %s\n", tilesToString(game.Players[currentPlayerIndex].HandTiles)))
+	game.Players[currentPlayerIndex].LastDrawnTile = &drawnTile
 
 	// 检查是否可以自摸胡牌
 	mjRule := &rule.MahjongRule{}
