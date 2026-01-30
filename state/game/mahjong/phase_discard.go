@@ -380,8 +380,8 @@ func (g *Mahjong) discardPhase(player *database.Player, game *database.Mahjong) 
 		}
 	}
 
-	// 没有任何玩家操作这张牌，轮到下家摸牌
-	game.CurrentIndex = game.NextPlayerIndex(game.CurrentIndex)
+	// 没有任何玩家操作这张牌，轮到打牌者的下家摸牌
+	game.CurrentIndex = game.NextPlayerIndex(currentPlayerIndex)
 	nextPlayer := game.Players[game.CurrentIndex]
 	nextPlayerObj := database.GetPlayer(nextPlayer.ID)
 	if nextPlayerObj != nil {
